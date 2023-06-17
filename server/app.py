@@ -66,20 +66,20 @@ def enclosure_by_id(id):
         response_body = "<h1>404 enclosure not found</h1>"
         response = make_response(response_body, 404)
         return response
+    else:
+        animals = Animal.query.join(Enclosure).filter(Enclosure.environment == enclosure.environment).all()
+        animal_lines = [f"Animals: {animal.name}" for animal in animals]
 
-    animals = Animal.query.filter(Animal.id == enclosure.id).all()
-    animal_list = [animal.name for animal in animals]
-
-    response_body = f"""
-        <ul>
-        <li>ID: {enclosure.id}</li>
-        <li>Environment: {enclosure.environment}</li>
-        <li>Open to Visitors: {enclosure.open_to_visitors}</li>
-        <li>Animals: {', '.join(animal_list)}</li>
-        </ul>
-    """
-    response = make_response(response_body, 200)
-    return response
+        response_body = f"""
+            <ul>
+            <li>ID: {enclosure.id}</li>
+            <li>Environment: {enclosure.environment}</li>
+            <li>Open to Visitors: {enclosure.open_to_visitors}</li>
+            {"".join([f"<li>{line}</li>" for line in animal_lines])}
+            </ul>
+        """
+        response = make_response(response_body, 200)
+        return response
 
 
 if __name__ == '__main__':
