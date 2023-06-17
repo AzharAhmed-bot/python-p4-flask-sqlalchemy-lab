@@ -26,12 +26,6 @@ with app.app_context():
     enclosures = []
     environments = ['Desert', 'Pond', 'Ocean', 'Field', 'Trees', 'Cave', 'Cage']
 
-    for n in range(25):
-        e = Enclosure(environment=rc(environments), open_to_visitors=rc([True, False]))
-        enclosures.append(e)
-
-    db.session.add_all(enclosures)
-
     animals = []
     species = ['Lion', 'Tiger', 'Bear', 'Hippo', 'Rhino', 'Elephant', 'Ostrich',
         'Snake', 'Monkey']
@@ -39,12 +33,18 @@ with app.app_context():
     for n in range(200):
         name = fake.first_name()
         while name in [a.name for a in animals]:
-            name=fake.first_name()
+            name = fake.first_name()
         a = Animal(name=name, species=rc(species))
         a.zookeeper = rc(zookeepers)
-        a.enclosure = rc(enclosures)
         animals.append(a)
 
     db.session.add_all(animals)
     db.session.commit()
 
+
+    for n in range(25):
+        e = Enclosure(environment=rc(environments), open_to_visitors=rc([True, False]), animal=rc(animals))
+        enclosures.append(e)
+
+    db.session.add_all(enclosures)
+    db.session.commit()
